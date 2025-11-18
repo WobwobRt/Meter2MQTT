@@ -21,8 +21,33 @@ A pluggable, multi-device meter aggregation gateway that publishes readings to M
 
 ## Quick Start
 
+### Option 1: Docker (Recommended)
+
 ```bash
-# Install
+# Clone repository
+git clone https://github.com/WobwobRt/meter2mqtt.git
+cd meter2mqtt
+
+# Copy example configs
+cp config.yaml.example config.yaml
+mkdir -p config.d
+cp config.d/multical.yaml.example config.d/multical.yaml
+
+# Edit config.yaml and config.d/*.yaml for your setup
+
+# Start services (includes MQTT broker and optional Home Assistant)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f meter2mqtt
+```
+
+See [DOCKER_GUIDE.md](docs/DOCKER_GUIDE.md) for detailed Docker documentation.
+
+### Option 2: Native Python
+
+```bash
+# Install dependencies
 pip install -r requirements.txt
 
 # Configure
@@ -30,8 +55,8 @@ cp config.yaml.example config.yaml
 mkdir -p config.d
 cp config.d/multical.yaml.example config.d/multical.yaml
 
-# Run
-python -m meter2mqtt.daemon
+# Run application
+python -m meter2mqtt
 ```
 
 ## Configuration
@@ -64,9 +89,30 @@ meters/dsmr/electricity/current_usage
 meters/dsmr/electricity/gas_provided
 ```
 
-## Architecture
+## Documentation
 
-See `ARCHITECTURE.md` for detailed design documentation.
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+### Getting Started
+- **[SETUP.md](docs/SETUP.md)** - Installation and configuration guide
+- **[QUICK_START.md](docs/QUICK_START.md)** - Get up and running in 5 minutes
+
+### Device Guides
+- **[MULTICAL_GUIDE.md](docs/MULTICAL_GUIDE.md)** - Kamstrup Multical heat meter setup
+- **[DSMR_GUIDE.md](docs/DSMR_GUIDE.md)** - Dutch Smart Meter setup
+
+### Home Assistant Integration
+- **[HA_INTEGRATION.md](docs/HA_INTEGRATION.md)** - Full Home Assistant setup guide
+- **[HA_DISCOVERY_QUICKREF.md](docs/HA_DISCOVERY_QUICKREF.md)** - Quick reference for MQTT Discovery
+- **[MQTT_HA_DISCOVERY.md](docs/MQTT_HA_DISCOVERY.md)** - Complete MQTT Discovery API reference
+
+### Architecture & Development
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System design and architecture
+- **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contributing guide and device support walkthrough
+- **[PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - Project overview and status
+
+### Examples
+- **[examples/ha_discovery_example.py](examples/ha_discovery_example.py)** - Working Home Assistant MQTT Discovery example
 
 ## License
 
@@ -74,4 +120,4 @@ See `ARCHITECTURE.md` for detailed design documentation.
 
 ## Contributing
 
-Contributions welcome! See CONTRIBUTING.md
+Contributions welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines on reporting bugs, suggesting features, and adding device support.

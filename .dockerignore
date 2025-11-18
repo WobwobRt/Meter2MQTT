@@ -1,0 +1,57 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+.tox
+.pytest_cache
+.coverage
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation (built files, not needed in image)
+docs/
+*.md
+!README.md
+
+# Project files
+.github/
+tests/
+.editorconfig
+.pre-commit-config.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Docker
+Dockerfile
+docker-compose*.yaml
+.dockerignore
+mosquitto.conf
+
+# Config (use mounted volumes)
+config.yaml
+config.d/
+
+# Examples
+examples/

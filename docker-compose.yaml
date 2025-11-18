@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # MQTT Broker (Mosquitto)
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    ports:
+      - "1883:1883"    # MQTT
+      - "9001:9001"    # WebSocket
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - meter2mqtt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "localhost", "-p", "1883", "-t", "test", "-C", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Home Assistant (Optional)
+  homeassistant:
+    image: homeassistant/home-assistant:latest
+    container_name: homeassistant
+    depends_on:
+      - mosquitto
+    ports:
+      - "8123:8123"
+    volumes:
+      - homeassistant_config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - meter2mqtt_network
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Amsterdam
+    # Uncomment to enable GPU support (if available)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Meter2MQTT Application
+  meter2mqtt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: meter2mqtt
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    environment:
+      - TZ=Europe/Amsterdam
+      - PYTHONUNBUFFERED=1
+      # Uncomment to set log level
+      # - LOG_LEVEL=DEBUG
+    volumes:
+      # Configuration files
+      - ./config.yaml:/app/config.yaml:ro
+      - ./config.d:/app/config.d:ro
+      # Serial devices (adjust based on your setup)
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyACM0:/dev/ttyACM0
+      # Optional: logs volume
+      - meter2mqtt_logs:/app/logs
+    networks:
+      - meter2mqtt_network
+    restart: unless-stopped
+    # Security options
+    cap_drop:
+      - ALL
+    cap_add:
+      - DAC_OVERRIDE  # For serial device access
+    read_only: true
+    tmpfs:
+      - /tmp
+    # Resource limits (adjust as needed)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+networks:
+  meter2mqtt_network:
+    driver: bridge
+
+volumes:
+  mosquitto_data:
+    driver: local
+  mosquitto_logs:
+    driver: local
+  homeassistant_config:
+    driver: local
+  meter2mqtt_logs:
+    driver: local
