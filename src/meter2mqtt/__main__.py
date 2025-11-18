@@ -8,9 +8,9 @@ import logging
 import time
 from typing import Optional
 
-from meter2mqtt.config import load_base_config, load_device_configs, get_mqtt_config, get_logging_config
+from meter2mqtt.handlers.config import load_base_config, load_device_configs, get_mqtt_config, get_logging_config
 from meter2mqtt.devices.lifecycle import DeviceLifecycleManager
-from meter2mqtt.mqtt import mqtt_handler
+from meter2mqtt.handlers.mqtt import mqtt_handler
 
 log = logging.getLogger(__name__)
 

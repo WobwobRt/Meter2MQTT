@@ -1,5 +1,5 @@
 paho-mqtt>=1.6.1
 pyyaml>=6.0
 watchdog>=3.0.0
-python-dsmr>=0.30  # For DSMR support
+dsmr-parser>=1.4.3  # For DSMR support
 pyserial>=3.5

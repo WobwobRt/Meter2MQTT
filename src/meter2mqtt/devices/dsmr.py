@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # DSMR device implementation
-# Adapter for Dutch Smart Meter using python-dsmr library
+# Adapter for Dutch Smart Meter using dsmr-parser library
 
 import logging
 from typing import Dict, List, Optional, Any
@@ -55,8 +55,7 @@ class DSMRDevice(BaseDevice):
             bool: True if connection successful
         """
         try:
-            import serial
-            from dsmr_parser import serial_communication
+            from dsmr_parser.clients import SerialReader, SocketReader
             
             version = self.device_config.get("version", "50")
             serial_options = self.device_config.get("serial_options", {})
@@ -72,25 +71,34 @@ class DSMRDevice(BaseDevice):
             settings = {**default_settings, **serial_options}
             
             try:
-                self.reader = serial_communication.SerialReader(
-                    port=self.port,
-                    baudrate=settings.get("baudrate"),
-                    bytesize=settings.get("bytesize"),
-                    parity=settings.get("parity"),
-                    stopbits=settings.get("stopbits"),
-                    timeout=settings.get("timeout"),
-                )
+                connection_type = self.device_config.get("connection", "serial_port")
+                
+                if connection_type == "serial_port":
+                    self.reader = SerialReader(
+                        port=self.port,
+                        baudrate=settings.get("baudrate"),
+                        bytesize=settings.get("bytesize"),
+                        parity=settings.get("parity"),
+                        stopbits=settings.get("stopbits"),
+                        timeout=settings.get("timeout"),
+                    )
+                elif connection_type == "network_url":
+                    self.reader = SocketReader(
+                        host=self.port.split(":")[0] if ":" in self.port else self.port,
+                        port=int(self.port.split(":")[1]) if ":" in self.port else 23,
+                        timeout=settings.get("timeout", 20),
+                    )
                 
                 self.is_connected = True
-                log.info(f"Connected to DSMR meter: {self.device_id} (version={version}, port={self.port})")
+                log.info(f"Connected to DSMR meter: {self.device_id} (version={version}, type={connection_type})")
                 return True
             
             except Exception as e:
-                log.error(f"Failed to open serial connection for {self.device_id}: {e}")
+                log.error(f"Failed to open connection for {self.device_id}: {e}")
                 return False
         
         except ImportError:
-            log.error(f"DSMR device requires 'python-dsmr' library. Install with: pip install python-dsmr")
+            log.error(f"DSMR device requires 'dsmr-parser' library. Install with: pip install dsmr-parser")
             return False
         except Exception as e:
             log.error(f"Connection failed for {self.device_id}: {e}")
@@ -119,15 +127,15 @@ class DSMRDevice(BaseDevice):
             return None
         
         try:
-            from dsmr_parser import parse_object
+            from dsmr_parser import telegram_to_object
             
-            # Read one line from DSMR stream
-            data = self.reader.read_one_packet()
-            if not data:
+            # Read one telegram from DSMR stream
+            telegram = self.reader.read_telegram()
+            if not telegram:
                 return None
             
-            # Parse the data
-            result = parse_object(data)
+            # Parse the telegram
+            result = telegram_to_object(telegram)
             
             # Extract enabled parameters
             values = {}
