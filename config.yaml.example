@@ -1,0 +1,42 @@
+# Base configuration for meter2mqtt
+# Contains MQTT settings, logging, and global defaults
+#
+# Device-specific configurations go in config.d/ directory
+
+mqtt:
+  # MQTT broker connection
+  host: "localhost"
+  port: 1883
+  client: "meter2mqtt"
+  
+  # Authentication (optional)
+  authentication: false
+  # username: "mqtt_user"
+  # password: "mqtt_password"
+  
+  # TLS/SSL (optional)
+  tls_enabled: false
+  # tls_ca_cert: "/path/to/ca.crt"
+  # tls_cert: "/path/to/client.crt"
+  # tls_key: "/path/to/client.key"
+  # tls_insecure: false
+  # tls_version: "PROTOCOL_TLSv1_2"
+  
+  # MQTT publishing options
+  qos: 1
+  retain: true
+  topic_prefix: "meters"
+
+logging:
+  level: "INFO"
+
+homeassistant:
+  # Home Assistant MQTT Discovery settings (optional)
+  enabled: false
+  discovery_prefix: "homeassistant"
+
+# Environment variables override YAML settings:
+# - MQTT_HOST, MQTT_PORT, MQTT_CLIENT, MQTT_QOS, MQTT_RETAIN, MQTT_TOPIC_PREFIX
+# - MQTT_AUTHENTICATION, MQTT_USERNAME, MQTT_PASSWORD
+# - MQTT_TLS_ENABLED, MQTT_TLS_CA_CERT, MQTT_TLS_CERT, MQTT_TLS_KEY, MQTT_TLS_INSECURE, MQTT_TLS_VERSION
+# - LOG_LEVEL

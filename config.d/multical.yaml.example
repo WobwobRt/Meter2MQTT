@@ -1,0 +1,81 @@
+# Multical device configuration example
+# 
+# This file demonstrates how to configure a Kamstrup Multical heat meter
+# Place this file in the config.d/ directory to enable the device
+# 
+# Supported Multical versions: 402, 403, 603
+# All parameters listed below are available; uncomment only those you need to reduce read frequency
+
+# Device type identifier
+type: multical
+
+# Connection configuration
+# Choose ONE of the following:
+
+# Option 1: Serial port connection
+connection: serial_port
+port: /dev/ttyUSB0
+
+# Option 2: Network connection (socket)
+# connection: network_url
+# url: socket://192.168.1.50:2003
+
+# Multical version (default: 402)
+# version: 402
+
+# Parameters to read from meter
+# Uncomment only the parameters you need to optimize read speed
+# See the complete list in devices/ha_metadata.py
+parameters:
+  # Core parameters (most commonly used)
+  - energy        # Total energy (kWh) - total_increasing
+  - power         # Current power (W) - measurement
+  - temp1         # Temperature 1 (°C) - measurement
+  - temp2         # Temperature 2 (°C) - measurement
+  - volume        # Total volume (m³) - total_increasing
+  - flow          # Current flow rate (m³/h) - measurement
+  - tempdiff      # Temperature difference (°C) - measurement
+  
+  # Optional: Temperature per volume
+  # - temp1xm3      # Temperature 1 per m³ (°C)
+  # - temp2xm3      # Temperature 2 per m³ (°C)
+  
+  # Optional: Monthly statistics (only if you need historical data)
+  # - minflow_m     # Min flow this month (m³/h)
+  # - maxflow_m     # Max flow this month (m³/h)
+  # - minflowDate_m # Date of min flow (month)
+  # - maxflowDate_m # Date of max flow (month)
+  # - minpower_m    # Min power this month (W)
+  # - maxpower_m    # Max power this month (W)
+  # - minpowerdate_m  # Date of min power (month)
+  # - maxpowerdate_m  # Date of max power (month)
+  # - avgtemp1_m    # Average temp1 this month (°C)
+  # - avgtemp2_m    # Average temp2 this month (°C)
+  
+  # Optional: Yearly statistics
+  # - minflow_y     # Min flow this year (m³/h)
+  # - maxflow_y     # Max flow this year (m³/h)
+  # - minflowdate_y # Date of min flow (year)
+  # - maxflowdate_y # Date of max flow (year)
+  # - minpower_y    # Min power this year (W)
+  # - maxpower_y    # Max power this year (W)
+  # - minpowerdate_y  # Date of min power (year)
+  # - maxpowerdate_y  # Date of max power (year)
+  # - avgtemp1_y    # Average temp1 this year (°C)
+  # - avgtemp2_y    # Average temp2 this year (°C)
+  
+  # Optional: Other parameters
+  # - infoevent     # Info event code
+  # - hourcounter   # Hour counter (h) - total_increasing
+  # - e1highres     # Energy 1 high resolution (kWh)
+
+# Poll interval in seconds (default: 300 = 5 minutes)
+poll_interval: 300
+
+# Optional: Serial connection settings (rarely needed)
+# serial_options:
+#   baudrate: 1200    # Default for Multical
+#   parity: none      # Default for Multical
+#   stopbits: 2       # Default for Multical
+#   bytesize: 8
+#   timeout: 2

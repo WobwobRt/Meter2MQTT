@@ -1,0 +1,67 @@
+# DSMR device configuration example
+# 
+# This file demonstrates how to configure a Dutch Smart Meter (DSMR) reader
+# Place this file in the config.d/ directory to enable the device
+# 
+# Supported DSMR versions: 40, 42, 50, 53
+# All parameters listed below are available; uncomment only those you need to reduce read frequency
+
+# Device type identifier
+type: dsmr
+
+# Connection configuration
+# Choose ONE of the following:
+
+# Option 1: Serial port connection (typical)
+connection: serial_port
+port: /dev/ttyUSB0
+
+# Option 2: Network connection (socket)
+# connection: network_url
+# url: socket://192.168.1.50:2001
+
+# DSMR version (default: 50)
+# version: 50
+
+# Parameters to read from meter
+# Uncomment only the parameters you need to optimize read speed
+# See the complete list in devices/ha_metadata.py
+parameters:
+  # Electricity usage
+  - current_electricity_usage       # Current usage (kW) - measurement
+  - current_electricity_delivery    # Current delivery (kW) - measurement
+  - electricity_used_tariff_1       # Used tariff 1 (kWh) - total_increasing
+  - electricity_used_tariff_2       # Used tariff 2 (kWh) - total_increasing
+  - electricity_delivered_tariff_1  # Delivered tariff 1 (kWh) - total_increasing
+  - electricity_delivered_tariff_2  # Delivered tariff 2 (kWh) - total_increasing
+  - electricity_active_import_total # Active import total (kWh) - total_increasing
+  - electricity_active_export_total # Active export total (kWh) - total_increasing
+  
+  # Gas
+  - gas_provided                    # Gas provided (m³) - total_increasing
+  
+  # Voltage per phase
+  - voltage_l1                      # Voltage L1 (V) - measurement
+  - voltage_l2                      # Voltage L2 (V) - measurement
+  - voltage_l3                      # Voltage L3 (V) - measurement
+  
+  # Current per phase
+  - current_l1                      # Current L1 (A) - measurement
+  - current_l2                      # Current L2 (A) - measurement
+  - current_l3                      # Current L3 (A) - measurement
+  
+  # Power per phase
+  - power_generated_l1              # Power generated L1 (W) - measurement
+  - power_generated_l2              # Power generated L2 (W) - measurement
+  - power_generated_l3              # Power generated L3 (W) - measurement
+
+# Poll interval in seconds (default: 300 = 5 minutes)
+poll_interval: 300
+
+# Optional: Serial connection settings (rarely needed)
+# serial_options:
+#   baudrate: 115200    # Default for DSMR
+#   bytesize: 8         # Default for DSMR
+#   parity: N           # Default for DSMR
+#   stopbits: 1         # Default for DSMR
+#   timeout: 20         # Default for DSMR
